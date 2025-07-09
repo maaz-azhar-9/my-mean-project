@@ -1,0 +1,38 @@
+mat-card{
+    padding: 1%;
+}
+mat-form-field,
+textarea{
+    width: 100%;
+}
+
+.saveButton{
+    position: relative;;
+    width: 150px;
+}
+
+mat-spinner {
+    margin: auto;
+}
+
+input[type=file]{
+    visibility: hidden;
+}
+
+.image-preview{
+    height: 5rem;
+    margin: 1rem 0;
+}
+
+.image-preview img{
+    height: 100%;
+}
+
+.post-image{
+    width: 30% !important;
+}
+
+.post-image img{
+    width: 30% !important;
+    box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+}
