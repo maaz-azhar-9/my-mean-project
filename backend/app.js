@@ -5,6 +5,7 @@ require('dotenv').config();
 const app = express();
 const bodyParser = require('body-parser');
 const PostRoutes = require('./routes/posts');
+const UserRoutes = require('./routes/user');
 
 const mongoose = require('mongoose');
 
@@ -33,6 +34,7 @@ res.setHeader("Access-Control-Allow-Methods",
 next();
 })
 
-app.use('/api/posts', PostRoutes)
+app.use('/api/posts', PostRoutes);
+app.use('api/user', UserRoutes)
 
 module.exports = app;
