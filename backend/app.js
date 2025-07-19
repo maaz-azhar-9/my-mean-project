@@ -35,6 +35,6 @@ next();
 })
 
 app.use('/api/posts', PostRoutes);
-app.use('api/user', UserRoutes)
+app.use('/api/user', UserRoutes)
 
 module.exports = app;
