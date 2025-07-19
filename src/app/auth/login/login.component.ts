@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,8 +10,8 @@ import { NgForm } from '@angular/forms';
 export class LoginComponent {
   isLoading = false;
 
+  authService = inject(AuthService);
   onLogin(form: NgForm){
-    console.log(form.value)
-
+    this.authService.login(form.value.email,form.value.password);
   }
 }
