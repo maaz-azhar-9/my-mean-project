@@ -6,6 +6,8 @@ const Post = require("../models/post")
 
 const multer = require('multer');
 
+const checkAuth = require('../middleware/check-auth');
+
 const MIME_TYPE_MAP = {
   'image/png' : 'png',
   'image/jpeg' : 'jpg',
@@ -28,7 +30,7 @@ const storage =  multer.diskStorage({
   },
 })
 
-router.post('', multer({storage : storage}).single('image'), (req,res,next)=>{
+router.post('',checkAuth , multer({storage : storage}).single('image'), (req,res,next)=>{
   console.log("file")
   const url = req.protocol + "://" +req.get("host")
     const post = new Post({
@@ -71,7 +73,7 @@ router.get('', (req, res, next) => {
   });
 })
   
-  router.put('/:id',multer({storage : storage}).single('image'),(req,res,next)=>{
+  router.put('/:id', checkAuth, multer({storage : storage}).single('image'),(req,res,next)=>{
     let imagePath = req.body.imagePath;
     if(req.file){
       const url = req.protocol + "://" +req.get("host");
@@ -92,7 +94,7 @@ router.get('', (req, res, next) => {
     })
   })
   
-  router.delete("/:id",(req,res,next)=>{
+  router.delete("/:id", checkAuth, (req,res,next)=>{
     Post.deleteOne({_id: req.params.id}).then(()=>{
       res.status(200).json({
         message: "Deleted Successfully"
@@ -100,7 +102,7 @@ router.get('', (req, res, next) => {
     })
   })
   
-  router.get("/:id",(req,res,next)=>{
+  router.get("/:id", checkAuth, (req,res,next)=>{
     Post.findById(req.params.id).then((post)=>{
       if(post){
         res.status(200).json(post);
