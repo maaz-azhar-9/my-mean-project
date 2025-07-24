@@ -12,6 +12,7 @@ export class LoginComponent {
 
   authService = inject(AuthService);
   onLogin(form: NgForm){
+    this.isLoading = true;
     this.authService.login(form.value.email,form.value.password);
   }
 }
