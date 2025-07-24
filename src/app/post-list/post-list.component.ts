@@ -1,8 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { Post } from "../posts/posts.model";
 import { PostsService } from "../posts/posts.service";
 import { Subscription } from "rxjs";
 import { PageEvent } from "@angular/material/paginator";
+import { AuthService } from "../auth/auth.service";
 @Component({
     selector:'app-post-list',
     templateUrl: './post-list.component.html',
@@ -11,6 +12,9 @@ import { PageEvent } from "@angular/material/paginator";
 export class PostListComponent implements OnInit,OnDestroy{
     posts: Post[] = [];
     postSub = new Subscription;
+    authSub = new Subscription;
+    isUserAuthenticated = false;
+    authSvc = inject(AuthService)
     isLoading = false;
     totalPosts = 0;
     postsPerPage = 2;
@@ -26,6 +30,9 @@ export class PostListComponent implements OnInit,OnDestroy{
             this.totalPosts = postsData.maxPosts
             this.isLoading = false;
         })
+        this.authSub = this.authSvc.getAuthStatus().subscribe((isAuthenticated) => {
+            this.isUserAuthenticated = isAuthenticated;
+        })
     }
 
     onDelete(postId: string){
@@ -37,6 +44,7 @@ export class PostListComponent implements OnInit,OnDestroy{
 
     ngOnDestroy() {
         this.postSub.unsubscribe();
+        this.authSub.unsubscribe();
     }
 
     onChangedPage(pageData: PageEvent){
@@ -46,7 +54,5 @@ export class PostListComponent implements OnInit,OnDestroy{
         this.postsService.getPosts(this.postsPerPage, this.currentPage)
         console.log(pageData);
     }
-
-
 
 }
