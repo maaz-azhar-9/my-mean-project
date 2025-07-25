@@ -22,6 +22,7 @@ export class AuthService {
   constructor() { }
   http = inject(HttpClient)
   router = inject(Router)
+  tokenTimer: any;
   createUser(email: String, password: String){
     const authData: AuthData = {
       email: email,
@@ -37,10 +38,14 @@ export class AuthService {
       email: email,
       password: password
     }
-    this.http.post<{token:string}>("http://localhost:3000/api/user/login",authData).subscribe((response) => {
+    this.http.post<{token:string, expireIn: number}>("http://localhost:3000/api/user/login",authData).subscribe((response) => {
       const token = response.token;
       this.token = token;
       if(token){
+      const expireInDuration = response.expireIn; // in seconds
+      this.tokenTimer = setTimeout(()=>{
+        this.logout();
+      }, expireInDuration * 1000);
       this.authStatus$.next(true);
       this.router.navigate(['/'])
       }
@@ -48,6 +53,7 @@ export class AuthService {
   }
   logout(){
     this.authStatus$.next(false);
-    this.router.navigate(['/'])
+    clearTimeout(this.tokenTimer);
+    this.router.navigate(['/']);
   }
 }
