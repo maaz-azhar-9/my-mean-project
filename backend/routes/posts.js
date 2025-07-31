@@ -88,19 +88,32 @@ router.get('', (req, res, next) => {
       imagePath: imagePath
     })
 
-    console.log(post)
-    Post.updateOne({_id:req.params.id},post).then(()=>{
-      res.status(200).json({
-        message:"Successfully Updated"
-      })
+    Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, post).then((result) => {
+      if (result.modifiedCount > 0) {
+        res.status(200).json({
+          message: "Successfully Updated"
+        })
+      }
+      else {
+        res.status(401).json({
+          message: "Not Authorized"
+        })
+      }
     })
   })
   
   router.delete("/:id", checkAuth, (req,res,next)=>{
-    Post.deleteOne({_id: req.params.id}).then(()=>{
-      res.status(200).json({
-        message: "Deleted Successfully"
-      })
+    Post.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then((result) => {
+      if (result.deleteCount > 0) {
+        res.status(200).json({
+          message: "Deleted Successfully"
+        })
+      }
+      else {
+        res.status(401).json({
+          message: "Not Authorized"
+        })
+      }
     })
   })
   
