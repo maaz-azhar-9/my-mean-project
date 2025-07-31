@@ -9,10 +9,15 @@ import { Router } from '@angular/router';
 export class AuthService {
 
   private token: string = "";
+  userId: string;
   private authStatus$ = new BehaviorSubject<boolean>(false);
 
   getToken(){
     return this.token;
+  }
+
+  getUserId(){
+    return this.userId;
   }
 
   getAuthStatus(){
@@ -38,8 +43,9 @@ export class AuthService {
       email: email,
       password: password
     }
-    this.http.post<{token:string, expireIn: number}>("http://localhost:3000/api/user/login",authData).subscribe((response) => {
+    this.http.post<{token:string, expireIn: number, userId: string}>("http://localhost:3000/api/user/login",authData).subscribe((response) => {
       const token = response.token;
+      this.userId = response.userId;
       this.token = token;
       if(token){
       const expireInDuration = response.expireIn; // in seconds
@@ -47,7 +53,7 @@ export class AuthService {
       this.authStatus$.next(true);
       const now = new Date();
       const expirationDate = new Date(now.getTime() + expireInDuration*1000);
-      this.setAuthData(token,expirationDate);
+      this.setAuthData(token,expirationDate, this.userId);
       this.router.navigate(['/'])
       }
     })
@@ -68,28 +74,33 @@ export class AuthService {
     this.authStatus$.next(false);
     this.clearAuthData();
     clearTimeout(this.tokenTimer);
+    this.userId = null;
     this.router.navigate(['/']);
   }
 
-  private setAuthData(token: string, expirationDate: Date){
+  private setAuthData(token: string, expirationDate: Date, userId: string){
     localStorage.setItem("token",token);
     localStorage.setItem("expiration",expirationDate.toISOString());
+    localStorage.setItem("userId", userId);
   }
 
   private clearAuthData(){
     localStorage.removeItem('token');
     localStorage.removeItem('expiration');
+    localStorage.removeItem('userId')
   }
 
   private getAuthData(){
     const token = localStorage.getItem('token');
     const expiration =  localStorage.getItem('expiration');
+    const userId =  localStorage.getItem('userId');
     if(!token || !expiration) {
       return null;
     }
     return {
       token: token,
-      expiration: new Date(expiration)
+      expiration: new Date(expiration),
+      userId: userId
     }
   }
 
