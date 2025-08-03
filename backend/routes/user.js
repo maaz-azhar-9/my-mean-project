@@ -42,7 +42,7 @@ router.post("/login", (req, res, next) => {
         return bcrypt.compare(req.body.password,user.password)
     })
     .then((result) => {
-        console.log(result)
+        if(!res.headersSent){
         if(!result){
             return res.status(401).json({
                 message:"Auth Failed",
@@ -60,6 +60,7 @@ router.post("/login", (req, res, next) => {
             expireIn: 3600,
             userId: fetchedUser._id
         })
+     }
     })
     .catch((err) => {
         return res.status(401).json({
