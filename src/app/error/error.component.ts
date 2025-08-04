@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   templateUrl: './error.component.html',
@@ -6,6 +7,6 @@ import { Component } from '@angular/core';
 })
 export class ErrorComponent {
 
-  message = "An unknown error occurred!";
+  data = inject(MAT_DIALOG_DATA)
 
 }

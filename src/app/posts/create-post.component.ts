@@ -1,17 +1,18 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { Post } from "./posts.model";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
 import { FormControl, FormGroup, NgForm } from "@angular/forms";
 import { PostsService } from "./posts.service";
 import { ActivatedRoute, ParamMap } from "@angular/router";
 import { Validators } from "@angular/forms";
 import { mimeType } from "./mime-type.validator";
+import { Subscription } from "rxjs";
+import { AuthService } from "../auth/auth.service";
 
 @Component({
     selector:'app-create-post',
     templateUrl: './create-post.component.html',
     styleUrls: ['./create-post.component.scss'],
 })
-export class CreatePostComponent implements OnInit{
+export class CreatePostComponent implements OnInit, OnDestroy {
 
     constructor(private postsService: PostsService,
         private route: ActivatedRoute
@@ -22,6 +23,8 @@ export class CreatePostComponent implements OnInit{
     post : any;
     imagePreview : string = "";
     showExistingImage = true;
+    authSvc = inject(AuthService)
+    authStatusSub: Subscription;
     form: FormGroup = new FormGroup({
         'title': new FormControl(null,{validators : [Validators.required, Validators.minLength(3)]}),
         'content': new FormControl(null,{validators : [Validators.required]}),
@@ -29,6 +32,9 @@ export class CreatePostComponent implements OnInit{
     });
     
     ngOnInit() {
+        this.authStatusSub = this.authSvc.getAuthStatus().subscribe((authStatus)=>{
+            this.isLoading = false;
+        });
         this.route.paramMap.subscribe((paramMap: ParamMap)=>{
             if(paramMap.has('postId')){
                 this.mode = "edit";
@@ -74,5 +80,9 @@ export class CreatePostComponent implements OnInit{
         }
         
         this.form.reset();
+    }
+
+    ngOnDestroy() {
+        this.authStatusSub.unsubscribe();
     }
 }

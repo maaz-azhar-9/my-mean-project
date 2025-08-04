@@ -48,6 +48,10 @@ router.post('',checkAuth , multer({storage : storage}).single('image'), (req,res
           id: createdPost._id,
         }
       })
+    }).catch(error => {
+      res.status(500).json({
+        message:"Creating a post failed"
+      })
     });
     // const post = req.body // body added by bodyParser Middleware
     console.log(post);
@@ -71,6 +75,10 @@ router.get('', (req, res, next) => {
       message: "posts are successfully fetched",
       posts: fetchedPosts,
       maxPosts: count
+    })
+  }).catch(error => {
+    res.status(500).json({
+      message:"Fetching post failed"
     })
   });
 })
@@ -99,6 +107,10 @@ router.get('', (req, res, next) => {
           message: "Not Authorized"
         })
       }
+    }).catch(error => {
+      res.status(500).json({
+        message: "Couldn't update post"
+      })
     })
   })
   
@@ -125,6 +137,14 @@ router.get('', (req, res, next) => {
       else{
         res.status(404).json({messsage:"Post is not available"})
       }
+    }).catch(error => {
+      res.status(500).json({
+        message:"Fetching post failed"
+      })
+    }).catch(error => {
+      res.status(500).json({
+        message:"Couldn,t delete."
+      })
     })
   })
 
