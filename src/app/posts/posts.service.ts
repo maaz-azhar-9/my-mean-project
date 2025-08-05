@@ -73,8 +73,6 @@ export class PostsService {
          postData = {id:id, title: title, content: content, imagePath: image}
       } 
       this.http.put(`http://localhost:3000/api/posts/${id}`,postData).subscribe((res)=>{
-         // console.log(res);
-         // const post = {id:id, title: title, content: content, imagePath: res.imagePath}
          this.router.navigate(['/']);
       })
      }
