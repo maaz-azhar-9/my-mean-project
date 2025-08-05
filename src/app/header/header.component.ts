@@ -1,6 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from "@angular/core";
 import { AuthService } from "../auth/auth.service";
 import { Subscription } from "rxjs";
+import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
     selector: 'app-header',

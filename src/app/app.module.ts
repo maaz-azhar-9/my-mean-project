@@ -23,6 +23,7 @@ import { ErrorInterceptor } from './error.interceptor';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
 import { ErrorComponent } from './error/error.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,6 +50,7 @@ import { ErrorComponent } from './error/error.component';
     FormsModule,
     CommonModule,
     MatDialogModule,
+    MatTooltipModule,
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi:true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi:true}

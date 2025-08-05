@@ -1,9 +1,13 @@
-<mat-toolbar>
-    <div style="display:flex">
+<mat-toolbar class="!w-full">
+    
+    <div class="flex justify-between w-full p-0 m-0">
+        <div class="flex">
         <a mat-button style="margin-right: 20px;" routerLink="">My Posts</a>
         <a *ngIf="isUserAuthenticated" mat-button routerLink="create" routerLinkActive="red">New Post</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="login" routerLinkActive="red">Login</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="signup" routerLinkActive="red">Signup</a>
-        <button (click)="logout()" *ngIf="isUserAuthenticated">Logout</button>
+        </div>
+        <i (click)="logout()" matTooltip="Logout" *ngIf="isUserAuthenticated" class="fa-solid fa-arrow-right-from-bracket mt-1.5 hover:cursor-pointer"></i>
+
     </div>
 </mat-toolbar>
