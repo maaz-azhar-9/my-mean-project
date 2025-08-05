@@ -17,7 +17,7 @@ export class AuthService {
   }
 
   getUserId() {
-    return this.userId;
+    return this.userId ?? localStorage.getItem('userId');
   }
 
   getAuthStatus() {
