@@ -3,10 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { CreatePostComponent } from './posts/create-post.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HeaderComponent } from './header/header.component';
-import { PostListComponent } from './post-list/post-list.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from  '@angular/common/http'
 import { ReactiveFormsModule } from '@angular/forms';
 import { SignupComponent } from './auth/signup/signup.component';
@@ -16,12 +14,11 @@ import { ErrorInterceptor } from './error.interceptor';
 import { CommonModule } from '@angular/common';
 import { ErrorComponent } from './error/error.component';
 import { AngularMaterialModule } from './angular-material.module';
+import { PostsModule } from './posts/posts.module';
 @NgModule({
   declarations: [
     AppComponent,
-    CreatePostComponent,
     HeaderComponent,
-    PostListComponent,
     LoginComponent,
     SignupComponent,
     ErrorComponent
@@ -34,7 +31,8 @@ import { AngularMaterialModule } from './angular-material.module';
     HttpClientModule,
     FormsModule,
     CommonModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    PostsModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi:true},
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi:true}
