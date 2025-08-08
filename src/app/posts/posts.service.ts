@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { map, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
+import { ToastService } from "../toast.service";
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,7 @@ export class PostsService {
      private posts: Post[] = [];
      private updatePost$ = new Subject<{posts:Post[], maxPosts: number}>();
 
-     constructor(private http: HttpClient, private router: Router){}
+     constructor(private http: HttpClient, private router: Router, private toastSvc: ToastService){}
 
      getPosts(postsPerPage: number, currentPage:number){
       const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}`
@@ -45,8 +46,7 @@ export class PostsService {
         postData.append("content",content);
         postData.append("image", image, title)
         this.http.post<{message: string, post: Post}>('http://localhost:3000/api/posts',postData).subscribe((response)=>{
-         // console.log(response.message);
-         // post.id = response.post.id
+         this.toastSvc.show("Post successfully added.")
          this.router.navigate(['/']);
         })
      }
@@ -56,7 +56,6 @@ export class PostsService {
      }
 
      getPost(postId: string | undefined | null){
-      // return {...this.posts.find((post)=> post.id===postId)};
       return this.http.get<{_id: string, title:string, content:string, imagePath: string}>(`http://localhost:3000/api/posts/${postId}`);
      }
 
@@ -73,6 +72,7 @@ export class PostsService {
          postData = {id:id, title: title, content: content, imagePath: image}
       } 
       this.http.put(`http://localhost:3000/api/posts/${id}`,postData).subscribe((res)=>{
+         this.toastSvc.show("Post sucessfully updated.")
          this.router.navigate(['/']);
       })
      }

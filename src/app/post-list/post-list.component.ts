@@ -4,6 +4,7 @@ import { PostsService } from "../posts/posts.service";
 import { Subscription } from "rxjs";
 import { PageEvent } from "@angular/material/paginator";
 import { AuthService } from "../auth/auth.service";
+import { ToastService } from "../toast.service";
 @Component({
     selector:'app-post-list',
     templateUrl: './post-list.component.html',
@@ -21,7 +22,7 @@ export class PostListComponent implements OnInit,OnDestroy{
     pageSizeOptions = [5, 10, 25, 100];
     currentPage = 1;
     userId: string
-    constructor(private postsService: PostsService){}
+    constructor(private postsService: PostsService, private toastSvc: ToastService){}
     
     ngOnInit() {
         this.postsService.getPosts(this.postsPerPage, this.currentPage);
@@ -41,6 +42,7 @@ export class PostListComponent implements OnInit,OnDestroy{
     onDelete(postId: string){
         this.isLoading = true;
         this.postsService.deletePost(postId).subscribe(()=>{
+            this.toastSvc.show("Post Successfulyy Deleted.")
             this.postsService.getPosts(this.postsPerPage, this.currentPage);
         }, ()=>{
             this.isLoading = false;

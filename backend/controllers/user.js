@@ -17,9 +17,17 @@ exports.createUser = (req, res) => {
                 result: result
             })
         }).catch((err) => {
+            console.log(err.errors.email.kind);
+            if(err.errors.email.kind === "unique"){
+                res.status(500).json({
+                    message:"User already exists."
+                })
+            }
+            else{
             res.status(500).json({
                 message:"Invalid authentication credentials"
             })
+           }
         })
     })
 
