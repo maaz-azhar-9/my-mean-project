@@ -9,7 +9,7 @@ const UserRoutes = require('./routes/user');
 
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect("mongodb+srv://maazazhar9:"+ process.env.MONOGO_ATLAS_PW +"@cluster0.rimhz.mongodb.net/node-angular?retryWrites=true&w=majority&appName=Cluster0")
 .then(()=>{
   console.log('Conntected to database');
 }).catch(()=>{
