@@ -1,3 +1,7 @@
+
+<div class="flex justify-center">
+  <input #searchInput class="h-10 w-60 rounded-md mb-5 border pl-2" type="text" [(ngModel)]="searchText" name="searchBox" placeholder="Search">
+</div>
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <mat-accordion multi="true" *ngIf="posts.length && !isLoading">
     <mat-expansion-panel *ngFor="let post of posts">
@@ -18,4 +22,5 @@
   (page)="onChangedPage($event)" aria-label="Select page">
 </mat-paginator>
 
-<p *ngIf="!posts.length && !isLoading" class="info-text mat-body-1">No posts added yet!</p>
+<p *ngIf="!posts.length && !searchText.length  && !isLoading" class="info-text mat-body-1">No posts added yet!</p>
+<p *ngIf="!posts.length && searchText.length  && !isLoading" class="info-text mat-body-1">No Result!</p>

@@ -17,8 +17,9 @@ export class PostsService {
 
      constructor(private http: HttpClient, private router: Router, private toastSvc: ToastService){}
 
-     getPosts(postsPerPage: number, currentPage:number){
-      const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}`
+     getPosts(postsPerPage: number, currentPage:number, searchText: string = ""){
+      const encodeSearchText = encodeURIComponent(searchText);
+      const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}&search=${encodeSearchText}`
         this.http.get<{message: string, posts: any[], maxPosts: number}>(BACKEND_URL + queryParams)
         .pipe(map((postsData)=>{
           return {posts: postsData.posts.map((post)=>{

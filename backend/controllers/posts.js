@@ -26,7 +26,20 @@ exports.creatPost = (req, res, next) => {
 exports.getPosts = (req, res, next) => {
     const pageSize = +req.query.pageSize;
     const currentPage = +req.query.page;
-    const postQuery = Post.find();
+    const search = req.query.search;
+    let postQuery;
+    let query = {
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { content: { $regex: search, $options: 'i' } }
+        ]
+      }
+    if(search?.length){
+        postQuery = Post.find(query);
+    }
+    else{
+    postQuery = Post.find();
+    }
     let fetchedPosts;
     if (pageSize && currentPage) {
         postQuery
@@ -35,7 +48,7 @@ exports.getPosts = (req, res, next) => {
     }
     postQuery.then(documents => {
         fetchedPosts = documents;
-        return Post.countDocuments();
+        return search?.length ? Post.countDocuments(query) : Post.countDocuments();
     }).then(count => {
         res.status(200).json({
             message: "posts are successfully fetched",
