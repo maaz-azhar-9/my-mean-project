@@ -20,7 +20,7 @@ const Post = require('./models/post')
 
 app.use(bodyParser.json()); // This is a middleware
 app.use(bodyParser.urlencoded({ extended: false}))
-app.use("/images", express.static(path.join("images")))
+app.use("/images", express.static(path.join("backend/images")))
 
 app.use((req,res,next)=>{
 console.log("Middleware");

@@ -5,6 +5,7 @@ import { CreatePostComponent } from './create-post.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from '../angular-material.module';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -18,6 +19,7 @@ import { RouterModule } from '@angular/router';
     ReactiveFormsModule,
     AngularMaterialModule,
     RouterModule,
+    FormsModule
   ]
 })
 export class PostsModule { }
