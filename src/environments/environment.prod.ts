@@ -1,4 +1,4 @@
 export const environment = {
-    production: false,
+    production: true,
     apiUrl:"http://social-media.ap-south-1.elasticbeanstalk.com/api"
 };
