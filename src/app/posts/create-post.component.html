@@ -5,15 +5,16 @@
         <input matInput type="text" name='title' placeholder="Title" formControlName="title" >
         <mat-error *ngIf="form?.get('title')?.invalid">Please enter the title</mat-error>
     </mat-form-field>
-    <div style="margin-bottom: 15px;">
+    <div class="mb-2 h-10">
         <button type="button" (click)="imageInput.click()" mat-stroked-button> Pick Image</button>
         <input type="file" #imageInput (change)="onImagePicked($event)">
     </div>
-    <div class="image-preview" *ngIf="imagePreview && imagePreview !== '' && form?.get('image')?.valid">
-        <img [src]="imagePreview" [alt]="form.value.title">
+    <mat-spinner class="!h-14 !w-14 !mb-2" *ngIf="isImageLoading"></mat-spinner>
+    <div class="flex justify-center mb-2 h-3/6 w-full" *ngIf="!isImageLoading && imagePreview !== '' && form?.get('image')?.valid">
+        <img class="w-4/5" [src]="imagePreview" [alt]="form.value.title">
     </div>
-    <div class="post-image" *ngIf="mode==='edit' && this.post.imagePath && showExistingImage">
-        <img [src]="this.post.imagePath">
+    <div class="flex justify-center mb-2 h-3/6 w-full" *ngIf="mode==='edit' && this.post.imagePath && showExistingImage">
+        <img class="w-4/5" [src]="this.post.imagePath">
     </div>
     <mat-form-field>
         <textarea class="myClass" placeholder="Post Content" rows="6" matInput formControlName="content"></textarea>
