@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, inject, ViewChild, ElementRef, AfterViewI
 import { Post } from "../posts/posts.model";
 import { PostsService } from "../posts/posts.service";
 import { debounceTime, fromEvent, Subscription } from "rxjs";
-import { PageEvent } from "@angular/material/paginator";
+import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { AuthService } from "../auth/auth.service";
 import { ToastService } from "../toast.service";
 @Component({
@@ -12,6 +12,8 @@ import { ToastService } from "../toast.service";
 })
 export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
     @ViewChild('searchInput') searchInput : ElementRef;
+    @ViewChild('paginator') paginator: MatPaginator;
+
     posts: Post[] = [];
     postSub = new Subscription;
     authSub = new Subscription;
@@ -20,7 +22,7 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
     isLoading = false;
     totalPosts = 0;
     postsPerPage = 2;
-    pageSizeOptions = [5, 10, 25, 100];
+    pageSizeOptions = [2, 5, 10, 25, 100];
     currentPage = 1;
     userId: string;
     searchText: string = "";
@@ -43,6 +45,8 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
 
     ngAfterViewInit() {
         fromEvent(this.searchInput.nativeElement,'input').pipe(debounceTime(1000)).subscribe(()=>{
+            this.currentPage = 1;
+            this.paginator.pageIndex = 0;
             this.postsService.getPosts(this.postsPerPage, this.currentPage, this.searchText);
         })
     }

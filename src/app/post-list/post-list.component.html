@@ -18,7 +18,7 @@
       </mat-action-row>
     </mat-expansion-panel>
 </mat-accordion>
-<mat-paginator *ngIf="posts.length" [length]="totalPosts" [pageSize]="postsPerPage" [pageSizeOptions]="pageSizeOptions"
+<mat-paginator #paginator *ngIf="posts.length" [length]="totalPosts" [pageSize]="postsPerPage" [pageSizeOptions]="pageSizeOptions"
   (page)="onChangedPage($event)" aria-label="Select page">
 </mat-paginator>
 
