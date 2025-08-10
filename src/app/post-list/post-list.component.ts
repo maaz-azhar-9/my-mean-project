@@ -55,6 +55,8 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
         this.isLoading = true;
         this.postsService.deletePost(postId).subscribe(()=>{
             this.toastSvc.show("Post Successfulyy Deleted.")
+            this.currentPage = 1;
+            this.paginator.pageIndex = 0;
             this.postsService.getPosts(this.postsPerPage, this.currentPage);
         }, ()=>{
             this.isLoading = false;

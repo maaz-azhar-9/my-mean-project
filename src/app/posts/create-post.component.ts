@@ -6,6 +6,8 @@ import { Validators } from "@angular/forms";
 import { mimeType } from "./mime-type.validator";
 import { Subscription } from "rxjs";
 import { AuthService } from "../auth/auth.service";
+import { ImageService } from "../image.service";
+import { ToastService } from "../toast.service";
 
 @Component({
     selector:'app-create-post',
@@ -15,11 +17,14 @@ import { AuthService } from "../auth/auth.service";
 export class CreatePostComponent implements OnInit, OnDestroy {
 
     constructor(private postsService: PostsService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private imgSvc: ImageService,
+        private toastSvc: ToastService
     ){}
     mode = "create";
     private postId: string ="";
     isLoading = false;
+    isImageLoading = false;
     post : any;
     imagePreview : string = "";
     showExistingImage = true;
@@ -54,18 +59,38 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     }
     // enteredTitle = '';
     // enteredContent = '';
-    onImagePicked(event : Event){
+    onImagePicked(event: Event) {
         this.showExistingImage = false;
-        const file = (event.target as HTMLInputElement).files;
-        if(file?.length) 
-        {this.form.patchValue({image: file[0]});
-        this.form.get("image")?.updateValueAndValidity();
+        this.isImageLoading = true;
         const reader = new FileReader();
         reader.onload = () => {
             this.imagePreview = (reader.result as string);
         }
-        reader.readAsDataURL(file[0]);
+        let file = (event.target as HTMLInputElement).files[0];
+        if (file.size > 972800) {
+            this.imgSvc.compressImage(file).then((compressedFile) => {
+                file = compressedFile;
+                this.toastSvc.show("Your image quality is down graded");
+                this.setImage(file);
+            }).catch(()=>{
+                this.toastSvc.show("Something went wrong try to add another picture");
+                this.isImageLoading = false;
+            })
+        }
+        else {
+            this.setImage(file);
+        }
     }
+
+    setImage(file: File){
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.imagePreview = (reader.result as string);
+        }
+        this.form.patchValue({ image: file });
+            this.form.get("image")?.updateValueAndValidity();
+            reader.readAsDataURL(file);
+        this.isImageLoading = false;
     }
 
     onSavePost(){
