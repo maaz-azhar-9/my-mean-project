@@ -82,14 +82,14 @@ export class CreatePostComponent implements OnInit, OnDestroy {
         }
     }
 
-    setImage(file: File){
+    setImage(file: File) {
         const reader = new FileReader();
         reader.onload = () => {
             this.imagePreview = (reader.result as string);
         }
         this.form.patchValue({ image: file });
-            this.form.get("image")?.updateValueAndValidity();
-            reader.readAsDataURL(file);
+        this.form.get("image")?.updateValueAndValidity();
+        reader.readAsDataURL(file);
         this.isImageLoading = false;
     }
 
