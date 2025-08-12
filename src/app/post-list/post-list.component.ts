@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { Post } from "../posts/posts.model";
 import { PostsService } from "../posts/posts.service";
-import { debounceTime, fromEvent, Subscription } from "rxjs";
+import { debounceTime, fromEvent, Subscription, tap } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { AuthService } from "../auth/auth.service";
 import { ToastService } from "../toast.service";
@@ -44,10 +44,10 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
     }
 
     ngAfterViewInit() {
-        fromEvent(this.searchInput.nativeElement,'input').pipe(debounceTime(1000)).subscribe(()=>{
+        fromEvent(this.searchInput.nativeElement, 'input').pipe(tap(() => this.isLoading = true), debounceTime(1000)).subscribe(() => {
             this.currentPage = 1;
-            this.paginator.pageIndex = 0;
             this.postsService.getPosts(this.postsPerPage, this.currentPage, this.searchText);
+            this.paginator.pageIndex = 0
         })
     }
 
