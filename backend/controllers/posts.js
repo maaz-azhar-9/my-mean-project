@@ -57,12 +57,12 @@ exports.getPosts = (req, res, next) => {
         return search?.length ? Post.countDocuments(query) : Post.countDocuments();
     }).then(count => {
         postCount = count;
-        return Promise.all(fetchedPosts.map((post) => {
+        return req?.query.userId !=="null" ? Promise.all(fetchedPosts.map((post) => {
             return Like.find({ postId: post._id, userId: req?.query.userId }).then((response) => {
-                post = { ...post._doc, isLiked: response.length > 0 ? true : false };
+                post = { ...post._doc, isLiked: (response.length > 0) ? true : false };
                 return post;
             })
-        }))
+        })) : fetchedPosts;
     }).then((finalPosts) => {
         res.status(200).json({
             message: "posts are successfully fetched",
@@ -70,6 +70,7 @@ exports.getPosts = (req, res, next) => {
             maxPosts: postCount
         })
     }).catch(error => {
+        console.log(error);
         res.status(500).json({
             message: "Fetching post failed"
         })
