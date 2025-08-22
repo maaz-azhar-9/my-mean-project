@@ -5,3 +5,9 @@ export interface Post {
     imagePath: string | null,
     creator: string
 }
+
+export enum LocalStorageEnum {
+    userId = "userId",
+    token = "token",
+    expiration = "expiration"
+}

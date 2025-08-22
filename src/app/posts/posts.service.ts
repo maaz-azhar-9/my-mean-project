@@ -5,6 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 import { ToastService } from "../toast.service";
 import { environment } from "src/environments/environment";
+import { LocalStorageEnum } from "./posts.model";
 
 const BACKEND_URL = environment.apiUrl + "/posts"
 
@@ -19,8 +20,15 @@ export class PostsService {
 
      getPosts(postsPerPage: number, currentPage:number, searchText: string = ""){
       const encodeSearchText = encodeURIComponent(searchText);
-      const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}&search=${encodeSearchText}`
-        this.http.get<{message: string, posts: any[], maxPosts: number}>(BACKEND_URL + queryParams)
+      const queryParams = {
+         pageSize: postsPerPage,
+         page:currentPage,
+         search: encodeSearchText,
+         userId: localStorage.getItem(LocalStorageEnum.userId)
+      }
+        this.http.get<{message: string, posts: any[], maxPosts: number}>(BACKEND_URL,{
+         params: queryParams
+        })
         .pipe(map((postsData)=>{
           return {posts: postsData.posts.map((post)=>{
             return {

@@ -1,4 +1,6 @@
 const Post = require("../models/post");
+const Like = require("../models/likes");
+const mongoose = require('mongoose')
 
 exports.creatPost = (req, res, next) => {
     const url = req?.protocol + "://" + req?.get("host")
@@ -6,6 +8,7 @@ exports.creatPost = (req, res, next) => {
         title: req?.body.title,
         content: req?.body.content,
         imagePath: url + "/images/" + req?.file.filename,
+        likeCount: 0,
         creator: req?.userData.userId
     })
     post.save().then((createdPost) => {
@@ -28,32 +31,44 @@ exports.getPosts = (req, res, next) => {
     const currentPage = +req.query.page;
     const search = req.query.search;
     let postQuery;
+    let fetchedPosts;
+    let postCount;
     let query = {
         $or: [
-          { title: { $regex: search, $options: 'i' } },
-          { content: { $regex: search, $options: 'i' } }
+            { title: { $regex: search, $options: 'i' } },
+            { content: { $regex: search, $options: 'i' } }
         ]
-      }
-    if(search?.length){
+    }
+
+    if (search?.length) {
         postQuery = Post.find(query);
     }
-    else{
-    postQuery = Post.find();
+    else {
+        postQuery = Post.find();
     }
-    let fetchedPosts;
+
     if (pageSize && currentPage) {
         postQuery
             .skip(pageSize * (currentPage - 1))
             .limit(pageSize)
     }
+
     postQuery.then(documents => {
         fetchedPosts = documents;
         return search?.length ? Post.countDocuments(query) : Post.countDocuments();
     }).then(count => {
+        postCount = count;
+        return Promise.all(fetchedPosts.map((post) => {
+            return Like.find({ postId: post._id, userId: req?.query.userId }).then((response) => {
+                post = { ...post._doc, isLiked: response.length > 0 ? true : false };
+                return post;
+            })
+        }))
+    }).then((finalPosts) => {
         res.status(200).json({
             message: "posts are successfully fetched",
-            posts: fetchedPosts,
-            maxPosts: count
+            posts: finalPosts,
+            maxPosts: postCount
         })
     }).catch(error => {
         res.status(500).json({
