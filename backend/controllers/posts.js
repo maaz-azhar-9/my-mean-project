@@ -2,11 +2,10 @@ const Post = require("../models/post");
 const Like = require("../models/likes");
 
 exports.creatPost = (req, res, next) => {
-    const url = req?.protocol + "://" + req?.get("host")
     const post = new Post({
         title: req?.body.title,
         content: req?.body.content,
-        imagePath: url + "/images/" + req?.file.filename,
+        imagePath: req?.file.path,
         likeCount: 0,
         creator: req?.userData.userId
     })

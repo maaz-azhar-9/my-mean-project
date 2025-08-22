@@ -1,25 +1,33 @@
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
 
 const MIME_TYPE_MAP = {
     'image/png': 'png',
     'image/jpeg': 'jpg',
     'image/jpg': 'jpg'
   }
-  
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      const isValid = MIME_TYPE_MAP[file.mimetype];
-      let error = new Error("Invalid mime type");
-      if (isValid) {
-        error = null
-      }
-      cb(error, 'backend/images');
-    },
-    filename: (req, file, cb) => {
-      const name = file.originalname.toLowerCase().split(' ').join('-');
+
+  const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: async (req, file) => {
       const ext = MIME_TYPE_MAP[file.mimetype];
-      cb(null, name + '-' + Date.now() + '.' + ext);
-    },
-  })
+      if (!ext) {
+        throw new Error('Invalid mime type'); // reject non-image files
+      }
+      return {
+        folder: 'my-app-images',
+        format: ext, // ensure correct file extension
+        public_id: Date.now().toString() // unique filename
+      };
+    }
+  });
 
   module.exports = multer({ storage: storage }).single('image');
