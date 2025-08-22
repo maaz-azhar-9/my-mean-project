@@ -37,6 +37,6 @@ next();
 
 app.use('/api/posts', PostRoutes);
 app.use('/api/user', UserRoutes);
-app.use('/api/like', LikeRoutes)
+app.use('/api/like', LikeRoutes);
 
 module.exports = app;

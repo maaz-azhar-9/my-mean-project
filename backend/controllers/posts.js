@@ -1,6 +1,5 @@
 const Post = require("../models/post");
 const Like = require("../models/likes");
-const mongoose = require('mongoose')
 
 exports.creatPost = (req, res, next) => {
     const url = req?.protocol + "://" + req?.get("host")
