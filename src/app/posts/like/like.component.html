@@ -1,0 +1,9 @@
+<div class="flex justify-center items-center">
+<button class="mr-1" [hidden]="!isUserAuthenticated" [disabled]="!isUserAuthenticated" (click)="updateLikeStatus()">
+<i *ngIf="liked" class="fa-solid fa-thumbs-up"></i>
+<i *ngIf="!liked" class="fa-regular fa-thumbs-up"></i>
+</button>
+<div>
+    {{likesCount}} Like<span *ngIf="likesCount>1">s</span>
+</div>
+</div>

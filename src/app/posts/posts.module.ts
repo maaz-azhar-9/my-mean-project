@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from '../angular-material.module';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { LikeComponent } from './like/like.component';
 
 
 
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
   declarations: [
     PostListComponent,
     CreatePostComponent,
+    LikeComponent,
   ],
   imports: [
     CommonModule,
