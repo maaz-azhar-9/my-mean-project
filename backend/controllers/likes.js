@@ -28,7 +28,7 @@ exports.removeLike = (req,res,next) =>{
         if(response.modifiedCount){
         Like.deleteOne({postId: postId, userId: userId}).then(()=>{
             res.status(200).json({
-                message: "unliked"
+                message: "Unliked"
             });
         }).catch(() => {
             res.status(500).json({

@@ -3,7 +3,9 @@ export interface Post {
     title: string,
     content: string,
     imagePath: string | null,
-    creator: string
+    creator: string,
+    likeCount: number,
+    isLiked?: boolean
 }
 
 export enum LocalStorageEnum {

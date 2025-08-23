@@ -36,7 +36,9 @@ export class PostsService {
                content: post.content,
                id: post._id,
                imagePath: post.imagePath,
-               creator: post.creator
+               creator: post.creator,
+               likeCount: post.likeCount,
+               isLiked: post.isLiked
             }
          }),
          maxPosts: postsData.maxPosts
