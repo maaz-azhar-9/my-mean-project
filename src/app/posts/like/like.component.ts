@@ -3,6 +3,7 @@ import { debounceTime, EMPTY, of, Subject, Subscription, switchMap } from 'rxjs'
 import { Post } from '../posts.model';
 import { LocalStorageEnum } from '../posts.model';
 import { LikeService } from './like.service';
+import { AudioService } from 'src/app/audio/audio.service';
 
 enum LikeStatusEnum{
   Liked = "Liked",
@@ -22,7 +23,8 @@ export class LikeComponent implements OnInit, OnDestroy {
   @Input() isUserAuthenticated = false;
   likeSub : Subscription;
   like$ = new Subject<void>();
-  likeSvc = inject(LikeService)
+  likeSvc = inject(LikeService);
+  audioSvc = inject(AudioService);
 
   ngOnInit() {
     this.liked = this.post.isLiked;
@@ -40,6 +42,7 @@ export class LikeComponent implements OnInit, OnDestroy {
   }
 
   updateLikeStatus(){
+    this.audioSvc.playLikeSound();
     this.liked = !this.liked;
     if(this.liked){
       this.post.likeCount++;
