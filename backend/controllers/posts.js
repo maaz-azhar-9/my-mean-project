@@ -86,6 +86,7 @@ exports.updatePost = (req, res, next) => {
         _id: req.body.id,
         title: req.body.title,
         content: req.body.content,
+        likeCount: req.body.likeCount,
         imagePath: imagePath
     })
 

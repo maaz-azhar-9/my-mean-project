@@ -59,10 +59,7 @@ export class PostsService {
         postData.append("title",title);
         postData.append("content",content);
         postData.append("image", image, title)
-        this.http.post<{message: string, post: Post}>(BACKEND_URL,postData).subscribe((response)=>{
-         this.toastSvc.show("Post successfully added.")
-         this.router.navigate(['/']);
-        })
+        return this.http.post<{message: string, post: Post}>(BACKEND_URL,postData)
      }
 
      deletePost(postId: string){
@@ -70,24 +67,22 @@ export class PostsService {
      }
 
      getPost(postId: string | undefined | null){
-      return this.http.get<{_id: string, title:string, content:string, imagePath: string}>(`${BACKEND_URL}/${postId}`);
+      return this.http.get<{_id: string, title:string, content:string, imagePath: string, likeCount: number}>(`${BACKEND_URL}/${postId}`);
      }
 
-     updatePost(id: string, title: string, content: string, image: File | string){
+     updatePost(id: string, title: string, content: string, image: File | string, likeCount: number){
       let postData;
       if(typeof(image) === "object"){
          postData = new FormData();
-         postData.append("id",id)
-         postData.append("title",title);
-         postData.append("content",content);
-         postData.append("image", image, title)
+         postData.append("id", id);
+         postData.append("title", title);
+         postData.append("content", content);
+         postData.append("image", image, title);
+         postData.append('likeCount', likeCount);
       }
       else{
-         postData = {id:id, title: title, content: content, imagePath: image}
+         postData = {id:id, title: title, content: content, imagePath: image, likeCount: likeCount}
       } 
-      this.http.put(`${BACKEND_URL}/${id}`,postData).subscribe((res)=>{
-         this.toastSvc.show("Post sucessfully updated.")
-         this.router.navigate(['/']);
-      })
+      return this.http.put(`${BACKEND_URL}/${id}`,postData)
      }
 }

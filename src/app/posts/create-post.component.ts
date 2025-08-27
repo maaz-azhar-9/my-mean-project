@@ -8,6 +8,7 @@ import { Subscription } from "rxjs";
 import { AuthService } from "../auth/auth.service";
 import { ImageService } from "../image.service";
 import { ToastService } from "../toast.service";
+import { Router } from "@angular/router";
 
 @Component({
     selector:'app-create-post',
@@ -19,7 +20,8 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     constructor(private postsService: PostsService,
         private route: ActivatedRoute,
         private imgSvc: ImageService,
-        private toastSvc: ToastService
+        private toastSvc: ToastService,
+        private router: Router,
     ){}
     mode = "create";
     private postId: string ="";
@@ -44,10 +46,9 @@ export class CreatePostComponent implements OnInit, OnDestroy {
             if(paramMap.has('postId')){
                 this.mode = "edit";
                 this.postId = paramMap.get('postId') ?? "";
-                // this.post = this.postsService.getPost(this.postId);
                 this.isLoading = true;
                 this.postsService.getPost(this.postId).subscribe((fetchedPost)=>{
-                    this.post = {id: fetchedPost._id, title:fetchedPost.title, content: fetchedPost.content, imagePath:fetchedPost.imagePath}
+                    this.post = {id: fetchedPost._id, title:fetchedPost.title, content: fetchedPost.content, imagePath:fetchedPost.imagePath, likeCount: fetchedPost?.likeCount}
                     this.isLoading = false;
                     this.form.setValue({'title':fetchedPost.title, 'content': fetchedPost.content,'image':fetchedPost.imagePath})
                 })
@@ -57,8 +58,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
             }
         })
     }
-    // enteredTitle = '';
-    // enteredContent = '';
+
     onImagePicked(event: Event) {
         this.showExistingImage = false;
         this.isImageLoading = true;
@@ -93,17 +93,26 @@ export class CreatePostComponent implements OnInit, OnDestroy {
         this.isImageLoading = false;
     }
 
-    onSavePost(){
-        if(this.form.invalid){
+    onSavePost() {
+        this.isLoading = true;
+        if (this.form.invalid) {
             return;
         }
-        if(this.mode=="create"){
-            this.postsService.addPosts(this.form.value.title,this.form.value.content, this.form.value.image);
+        if (this.mode == "create") {
+            this.postsService.addPosts(this.form.value.title, this.form.value.content, this.form.value.image).subscribe(() => {
+                this.toastSvc.show("Post successfully added.");
+                this.isLoading = false;
+                this.router.navigate(['/']);
+            });
         }
-        else{
-            this.postsService.updatePost(this.postId, this.form.value.title, this.form.value.content, this.form.value.image);
+        else {
+            this.postsService.updatePost(this.postId, this.form.value.title, this.form.value.content, this.form.value.image, this.post?.likeCount).subscribe(() => {
+                this.toastSvc.show("Post sucessfully updated.");
+                this.isLoading = false;
+                this.router.navigate(['/']);
+            });
         }
-        
+
         this.form.reset();
     }
 
