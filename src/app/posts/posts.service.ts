@@ -80,7 +80,7 @@ export class PostsService {
          postData.append("image", image, title);
       }
       else{
-         postData = {id:id, title: title, content: content, imagePath: image, likeCount: likeCount}
+         postData = {id:id, title: title, content: content, imagePath: image}
       } 
       return this.http.put(`${BACKEND_URL}/${id}`,postData)
      }
