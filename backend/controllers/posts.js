@@ -82,15 +82,15 @@ exports.updatePost = (req, res, next) => {
         const url = req.protocol + "://" + req.get("host");
         imagePath = url + "/images/" + req.file.filename
     }
-    const post = new Post({
-        _id: req.body.id,
-        title: req.body.title,
-        content: req.body.content,
-        likeCount: req.body.likeCount,
-        imagePath: imagePath
-    })
 
-    Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, post).then((result) => {
+    Post.updateOne({ _id: req.params.id, creator: req.userData.userId }, {
+        $set: {
+            _id: req.body.id,
+            title: req.body.title,
+            content: req.body.content,
+            imagePath: imagePath
+        }
+    }).then((result) => {
         if (result.matchedCount > 0) {
             res.status(200).json({
                 message: "Successfully Updated"
