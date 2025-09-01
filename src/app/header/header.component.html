@@ -1,8 +1,9 @@
-<mat-toolbar class="!w-full">
+<mat-toolbar class="!w-full !pl-0">
     
     <div class="flex justify-between w-full p-0 m-0">
-        <div class="flex">
-        <a mat-button style="margin-right: 20px;" routerLink="">Posts</a>
+        <div class="flex items-center">
+        <img class="h-10 w-10 ml-2 mr-2" src="assets/anonybook.ico">
+        <a mat-button class="mr-5" routerLink="">Posts</a>
         <a *ngIf="isUserAuthenticated" mat-button routerLink="create" routerLinkActive="red">Add Post</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/login" routerLinkActive="red">Login</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/signup" routerLinkActive="red">Signup</a>
