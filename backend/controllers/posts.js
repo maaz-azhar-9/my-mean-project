@@ -47,6 +47,7 @@ exports.getPosts = (req, res, next) => {
 
     if (pageSize && currentPage) {
         postQuery
+            .sort({_id:-1})
             .skip(pageSize * (currentPage - 1))
             .limit(pageSize)
     }
