@@ -2,8 +2,8 @@
     
     <div class="flex justify-between w-full p-0 m-0">
         <div class="flex">
-        <a mat-button style="margin-right: 20px;" routerLink="">My Posts</a>
-        <a *ngIf="isUserAuthenticated" mat-button routerLink="create" routerLinkActive="red">New Post</a>
+        <a mat-button style="margin-right: 20px;" routerLink="">Posts</a>
+        <a *ngIf="isUserAuthenticated" mat-button routerLink="create" routerLinkActive="red">Add Post</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/login" routerLinkActive="red">Login</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/signup" routerLinkActive="red">Signup</a>
         </div>
