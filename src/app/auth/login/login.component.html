@@ -9,6 +9,19 @@
         <input name="password" type="password" ngModel matInput placeholder="Password" #passwordInput="ngModel" required>
         <mat-error *ngIf="passwordInput.invalid">Please enter a valid password</mat-error>
     </mat-form-field>
-    <button mat-raised-button  color="primary" type="submit">Login</button>
+    <div class="flex items-center">
+    <button mat-raised-button class="mr-2"  color="primary" type="submit">Login</button>
+    <span> OR </span>
+    <button mat-raised-button class="ml-2" (click)="signIn($event)">
+        <div class="flex items-center justify-between">
+          <img
+            class="h-4 w-4"
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google sign-in"
+          />
+          <span class="ml-2 text-xs lg:text-sm">Login with Google</span>
+        </div>
+      </button>
+    </div>
     </form>
 </mat-card>
