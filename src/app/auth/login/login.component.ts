@@ -16,14 +16,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   authService = inject(AuthService);
   authStatusSub : Subscription;
   client: google.accounts.oauth2.TokenClient;
-
+  GOOGLE_SSO_KEY = "518336938659-n2mntbdl5jinr7iodhr2njj4gehbjcp7";
   ngOnInit() {
     this.authStatusSub = this.authService.getAuthStatus().subscribe(()=>{
       this.isLoading = false;
     });
 
     this.client = window.google.accounts.oauth2.initTokenClient({
-      client_id: `${environment.GOOGLE_SSO_KEY}.apps.googleusercontent.com`,
+      client_id: `${environment.GOOGLE_SSO_KEY ?? this.GOOGLE_SSO_KEY}.apps.googleusercontent.com`,
       scope: 'openid profile email',
       callback: (tokenResponse: any) => {
         console.log(tokenResponse);
