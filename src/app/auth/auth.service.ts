@@ -7,6 +7,12 @@ import { environment } from 'src/environments/environment';
 
 const BACKEND_URL = environment.apiUrl + "/user/"
 
+interface ILoginInterface { 
+  token: string,
+  expireIn: number,
+  userId: string 
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -51,8 +57,26 @@ export class AuthService {
       email: email,
       password: password
     }
-    this.http.post<{ token: string, expireIn: number, userId: string }>(BACKEND_URL + "login", authData).subscribe((response) => {
-      const token = response.token;
+    this.http.post<ILoginInterface>(BACKEND_URL + "login", authData).subscribe((response) => {
+      this.handleLoginResponse(response);
+    },
+      (error) => {
+        this.authStatus$.next(false);
+      }
+    )
+  }
+
+  loginWithGoogle(authToken: string){
+    const authData = {
+      token : authToken
+    }
+    this.http.post<ILoginInterface>(BACKEND_URL + "googleOAuth", authData).subscribe((response)=>{
+      this.handleLoginResponse(response);
+    })
+  }
+
+  handleLoginResponse(response: ILoginInterface){
+    const token = response.token;
       this.userId = response.userId;
       this.token = token;
       if (token) {
@@ -64,11 +88,6 @@ export class AuthService {
         this.setAuthData(token, expirationDate, this.userId);
         this.router.navigate(['/'])
       }
-    },
-      (error) => {
-        this.authStatus$.next(false);
-      }
-    )
   }
 
   autoAuth() {

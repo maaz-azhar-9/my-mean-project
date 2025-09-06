@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       client_id: `${environment.GOOGLE_SSO_KEY ?? this.GOOGLE_SSO_KEY}.apps.googleusercontent.com`,
       scope: 'openid profile email',
       callback: (tokenResponse: any) => {
-        console.log(tokenResponse);
+        this.authService.loginWithGoogle(tokenResponse.access_token);
       }
     });
   }
