@@ -44,3 +44,6 @@ Thumbs.db
 
 # my images
 /backend/images
+
+# environment files
+/src/environments/
