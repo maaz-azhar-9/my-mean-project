@@ -8,4 +8,6 @@ router.post('/signup', userConroller.createUser);
 
 router.post("/login", userConroller.userLogin);
 
+router.post("/googleOAuth", userConroller.loginWithGoogle);
+
 module.exports = router
