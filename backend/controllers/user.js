@@ -112,6 +112,7 @@ function loginResponse(email, id) {
     return {
         token: token,
         expireIn: 3600,
-        userId: id
+        userId: id,
+        userName: email.split('@')[0]
     }
 }

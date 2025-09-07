@@ -4,13 +4,15 @@ import { AuthData } from './auth-data.model';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { LocalStorageEnum } from '../posts/posts.model';
 
 const BACKEND_URL = environment.apiUrl + "/user/"
 
 interface ILoginInterface { 
   token: string,
   expireIn: number,
-  userId: string 
+  userId: string ,
+  userName: string
 }
 
 @Injectable({
@@ -21,13 +23,18 @@ export class AuthService {
   private token: string = "";
   userId: string;
   private authStatus$ = new BehaviorSubject<boolean>(false);
+  userName: string;
 
   getToken() {
     return this.token;
   }
 
   getUserId() {
-    return this.userId ?? localStorage.getItem('userId');
+    return this.userId ?? localStorage.getItem(LocalStorageEnum.userId);
+  }
+
+  getUserName() {
+    return this.userName ?? localStorage.getItem(LocalStorageEnum.userName);
   }
 
   getAuthStatus() {
@@ -78,6 +85,7 @@ export class AuthService {
   handleLoginResponse(response: ILoginInterface){
     const token = response.token;
       this.userId = response.userId;
+      this.userName = response.userName
       this.token = token;
       if (token) {
         const expireInDuration = response.expireIn; // in seconds
@@ -85,7 +93,7 @@ export class AuthService {
         this.authStatus$.next(true);
         const now = new Date();
         const expirationDate = new Date(now.getTime() + expireInDuration * 1000);
-        this.setAuthData(token, expirationDate, this.userId);
+        this.setAuthData(token, expirationDate, this.userId, this.userName);
         this.router.navigate(['/'])
       }
   }
@@ -109,16 +117,18 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
-  private setAuthData(token: string, expirationDate: Date, userId: string) {
-    localStorage.setItem("token", token);
-    localStorage.setItem("expiration", expirationDate.toISOString());
-    localStorage.setItem("userId", userId);
+  private setAuthData(token: string, expirationDate: Date, userId: string, userName: string) {
+    localStorage.setItem(LocalStorageEnum.token, token);
+    localStorage.setItem(LocalStorageEnum.expiration, expirationDate.toISOString());
+    localStorage.setItem(LocalStorageEnum.userId, userId);
+    localStorage.setItem(LocalStorageEnum.userName, userName)
   }
 
   private clearAuthData() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('expiration');
-    localStorage.removeItem('userId')
+    localStorage.removeItem(LocalStorageEnum.token);
+    localStorage.removeItem(LocalStorageEnum.expiration);
+    localStorage.removeItem(LocalStorageEnum.userId);
+    localStorage.removeItem(LocalStorageEnum.userName);
   }
 
   private getAuthData() {

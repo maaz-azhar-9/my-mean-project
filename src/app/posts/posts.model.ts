@@ -11,5 +11,6 @@ export interface Post {
 export enum LocalStorageEnum {
     userId = "userId",
     token = "token",
-    expiration = "expiration"
+    expiration = "expiration",
+    userName = "userName"
 }

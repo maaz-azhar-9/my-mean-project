@@ -8,7 +8,7 @@
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/login" routerLinkActive="red">Login</a>
         <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/signup" routerLinkActive="red">Signup</a>
         </div>
-        <i (click)="logout()" matTooltip="Logout" *ngIf="isUserAuthenticated" class="fa-solid fa-arrow-right-from-bracket mt-1.5 hover:cursor-pointer"></i>
+        <div class="flex items-center"><span class="mr-3 mt-1 text-sm">{{authSvc.getUserName()}}</span><i (click)="logout()" matTooltip="Logout" *ngIf="isUserAuthenticated" class="fa-solid fa-arrow-right-from-bracket mt-1.5 hover:cursor-pointer"></i></div>
 
     </div>
 </mat-toolbar>
