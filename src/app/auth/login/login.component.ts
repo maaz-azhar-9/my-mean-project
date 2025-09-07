@@ -3,6 +3,7 @@ import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
 import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -14,11 +15,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   isLoading = false;
 
   authService = inject(AuthService);
+  router = inject(Router);
   authStatusSub : Subscription;
   client: google.accounts.oauth2.TokenClient;
   GOOGLE_SSO_KEY = "518336938659-n2mntbdl5jinr7iodhr2njj4gehbjcp7";
   ngOnInit() {
-    this.authStatusSub = this.authService.getAuthStatus().subscribe(()=>{
+    this.authStatusSub = this.authService.getAuthStatus().subscribe((isAuthenticated)=>{
+      if(isAuthenticated) this.router.navigate(['']);
       this.isLoading = false;
     });
 
