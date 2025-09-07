@@ -4,7 +4,7 @@
 </div>
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <mat-accordion multi="true" *ngIf="posts.length && !isLoading">
-    <mat-expansion-panel *ngFor="let post of posts">
+    <mat-expansion-panel expanded="true" *ngFor="let post of posts">
       <mat-expansion-panel-header>
         <mat-panel-title> {{post?.title}} </mat-panel-title>
       </mat-expansion-panel-header>
@@ -15,8 +15,8 @@
       <mat-action-row class="!flex !justify-between !items-center">
         <div><app-like [isUserAuthenticated]="isUserAuthenticated"[post]="post"></app-like></div>
         <div *ngIf="isUserAuthenticated && userId === post.creator">
-        <a mat-button color="primary" [routerLink]="['/edit',post.id]">EDIT</a>
-        <button mat-button color="warn" (click)="onDelete(post.id)">DELETE</button>
+        <a mat-button color="primary" [routerLink]="['/edit',post.id]"><i class="fa-solid fa-pen-to-square"></i></a>
+        <button mat-button color="warn" (click)="onDelete(post.id)"><i class="fa-solid fa-trash"></i></button>
         </div>
       </mat-action-row>
     </mat-expansion-panel>
