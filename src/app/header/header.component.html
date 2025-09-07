@@ -1,14 +1,17 @@
 <mat-toolbar class="!w-full !pl-0">
-    
+
     <div class="flex justify-between w-full p-0 m-0">
         <div class="flex items-center">
-        <img class="h-10 w-10 ml-2 mr-2" src="assets/anonybook.ico">
-        <a mat-button class="mr-5" routerLink="">Posts</a>
-        <a *ngIf="isUserAuthenticated" mat-button routerLink="create" routerLinkActive="red">Add Post</a>
-        <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/login" routerLinkActive="red">Login</a>
-        <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/signup" routerLinkActive="red">Signup</a>
+            <img class="h-10 w-10 ml-2 mr-2" src="assets/anonybook.ico">
+            <a mat-button class="mr-5" routerLink="">Posts</a>
+            <a *ngIf="isUserAuthenticated" mat-button routerLink="create" routerLinkActive="red">Add Post</a>
+            <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/login" routerLinkActive="red">Login</a>
+            <a *ngIf="!isUserAuthenticated" mat-button routerLink="auth/signup" routerLinkActive="red">Signup</a>
         </div>
-        <div class="flex items-center"><span class="mr-3 mt-1 text-sm">{{authSvc.getUserName()}}</span><i (click)="logout()" matTooltip="Logout" *ngIf="isUserAuthenticated" class="fa-solid fa-arrow-right-from-bracket mt-1.5 hover:cursor-pointer"></i></div>
+        <div class="flex items-center"><span *ngIf="isUserAuthenticated"
+                class="mr-3 mt-1 text-sm">{{authSvc.getUserName()}}</span><i (click)="logout()" matTooltip="Logout"
+                *ngIf="isUserAuthenticated"
+                class="fa-solid fa-arrow-right-from-bracket mt-1.5 hover:cursor-pointer"></i></div>
 
     </div>
 </mat-toolbar>
