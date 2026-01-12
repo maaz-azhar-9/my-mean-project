@@ -8,8 +8,9 @@ module.exports = (req, res, next) =>{
     next()
     }
     catch(error){
+        req.canBypassAuth ? next() :
         res.status(401).send({
             message:"You are not authenticated"
-        })
+        });
     }
 }

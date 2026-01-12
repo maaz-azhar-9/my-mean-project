@@ -1,0 +1,12 @@
+<div class="flex items-center"><div [routerLink]="['']" class="hover:cursor-pointer"><i class="fa-solid fa-arrow-left"></i></div>
+    <span class="ml-2 text-2xl" *ngIf="post">{{post?.title}}</span>
+</div>
+<div class="flex justify-center bg-black mt-3">
+    <img class="max-h-[70lvh] object-contain" [src]="post.imagePath" [alt]="post.title">
+</div>
+<div class="whitespace-pre-wrap mt-2 pb-10 text-xl">{{post?.content}}</div>
+<div><app-like [isUserAuthenticated]="isUserAuthenticated" [post]="post"></app-like></div>
+<div *ngIf="isUserAuthenticated && userId === post.creator">
+    <a mat-button color="primary" [routerLink]="['/edit',post.id]"><i class="fa-solid fa-pen-to-square"></i></a>
+    <button mat-button color="warn" (click)="onDelete(post.id)"><i class="fa-solid fa-trash"></i></button>
+</div>

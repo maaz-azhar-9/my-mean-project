@@ -7,6 +7,7 @@ import { AngularMaterialModule } from '../angular-material.module';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { LikeComponent } from './like/like.component';
+import { ViewPostComponent } from './view-post/view-post.component';
 
 
 
@@ -15,6 +16,7 @@ import { LikeComponent } from './like/like.component';
     PostListComponent,
     CreatePostComponent,
     LikeComponent,
+    ViewPostComponent
   ],
   imports: [
     CommonModule,

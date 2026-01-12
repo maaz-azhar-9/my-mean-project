@@ -125,23 +125,31 @@ exports.deletePost = (req, res, next) => {
 }
 
 exports.getPost = (req, res, next) => {
-    Like.find({ postId: req.params.id, userId: req.userData.userId }).then((like) => {
-        let isLiked = like.length ? true : false;
+    if (req.userData) {
+        Like.find({ postId: req.params.id, userId: req.userData.userId }).then((like) => {
+            let isLiked = like.length ? true : false;
+            Post.findById(req.params.id).then((post) => {
+                if (post) {
+                    res.status(200).json({ ...post._doc, isLiked: isLiked });
+                }
+                else {
+                    res.status(404).json({ messsage: "Post is not available" })
+                }
+            }).catch(error => {
+                res.status(500).json({
+                    message: "Fetching post failed"
+                })
+            })
+        });
+    }
+    else {
         Post.findById(req.params.id).then((post) => {
             if (post) {
-                res.status(200).json({ ...post._doc, isLiked: isLiked });
+                res.status(200).json({ ...post._doc });
             }
             else {
                 res.status(404).json({ messsage: "Post is not available" })
             }
-        }).catch(error => {
-            res.status(500).json({
-                message: "Fetching post failed"
-            })
-        }).catch(error => {
-            res.status(500).json({
-                message: "Couldn't delete."
-            })
         })
-    });
+    }
 }

@@ -4,6 +4,8 @@ const router = express.Router();
 
 const checkAuth = require('../middleware/check-auth');
 
+const canBypassAuth = require('../middleware/can-bypass-auth');
+
 const postsController = require('../controllers/posts');
 
 const extractFile = require('../middleware/file')
@@ -16,6 +18,6 @@ router.put('/:id', checkAuth, extractFile, postsController.updatePost)
 
 router.delete("/:id", checkAuth, postsController.deletePost)
 
-router.get("/:id", checkAuth, postsController.getPost);
+router.get("/:id", canBypassAuth, checkAuth, postsController.getPost);
 
 module.exports = router;
