@@ -1,28 +1,76 @@
 const Post = require("../models/post");
 const Like = require("../models/likes");
+const axios = require('axios')
+const mongoose = require('mongoose')
+const aiPostSuggestionApiConfig = require("../configs/ai-post-suggestion-config");
+
+const aiPostSuggestionApiClient = axios.create({
+    baseURL: aiPostSuggestionApiConfig.app2.baseUrl,
+    timeout: aiPostSuggestionApiConfig.app2.timeout,
+});
 
 exports.creatPost = (req, res, next) => {
     const post = new Post({
-        title: req?.body.title,
-        content: req?.body.content,
-        imagePath: req?.file.path,
+        title: req.body.title,
+        content: req.body.content,
+        imagePath: req.file?.path,
         likeCount: 0,
-        creator: req?.userData.userId
-    })
-    post.save().then((createdPost) => {
-        res.status(201).json({
-            message: "post added sucessfully",
-            post: {
-                ...createdPost,
-                id: createdPost._id,
-            }
-        })
-    }).catch(error => {
-        res.status(500).json({
-            message: "Creating a post failed"
-        })
+        creator: req.userData.userId
     });
-}
+
+    let createdPostRef = null;
+
+    mongoose.startSession()
+        .then(session => {
+            session.startTransaction();
+
+            return post.save({ session })
+                .then(createdPost => {
+                    createdPostRef = createdPost;
+                    return session.commitTransaction()
+                        .then(() => {
+                            session.endSession();
+                            return createdPost;
+                        });
+                })
+                .catch(err => {
+                    return session.abortTransaction()
+                        .then(() => {
+                            session.endSession();
+                            throw err;
+                        });
+                });
+        })
+        .then(createdPost => {
+            return aiPostSuggestionApiClient.post('/api/add', {
+                postTitle: createdPost.title,
+                postContent: createdPost.content,
+                postId: createdPost._id,
+                userId: createdPost.creator
+            })
+            .then(() => {
+                res.status(201).json({
+                    message: "Post created successfully",
+                    post: createdPost
+                });
+            })
+            .catch(() => {
+                return Post.findByIdAndDelete(createdPost._id)
+                    .then(() => {
+                        res.status(500).json({
+                            message: "Vector DB failed, MongoDB insert rolled back"
+                        });
+                    });
+            });
+        })
+        .catch(err => {
+            res.status(500).json({
+                message: "Post creation failed",
+                error: err.message
+            });
+        });
+};
+
 
 exports.getPosts = (req, res, next) => {
     const pageSize = +req.query.pageSize;

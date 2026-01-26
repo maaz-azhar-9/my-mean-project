@@ -23,7 +23,6 @@ export class ViewPostComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSvc.getAuthStatus().subscribe((status)=>{
-      console.log(status);
       this.isUserAuthenticated = status;
     })
     this.userId = this.authSvc.getUserId();
