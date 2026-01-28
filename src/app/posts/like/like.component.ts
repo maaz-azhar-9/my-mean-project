@@ -27,11 +27,11 @@ export class LikeComponent implements OnInit, OnDestroy {
   audioSvc = inject(AudioService);
 
   ngOnInit() {
-    this.liked = this.post.isLiked;
+    this.liked = this.post?.isLiked;
     this.likeSub = this.like$.pipe(debounceTime(500), switchMap(()=>{
       const userId = localStorage.getItem(LocalStorageEnum.userId);
       const postId = this.post.id;
-      if(this.liked !== this.post.isLiked){
+      if(this.liked !== this.post?.isLiked){
         return this.liked ? this.likeSvc.likePost(postId,userId) : this.likeSvc.unlikePost(postId,userId);
       }
       return of({message:"API not called"});

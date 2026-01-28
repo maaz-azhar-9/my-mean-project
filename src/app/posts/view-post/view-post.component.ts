@@ -19,7 +19,7 @@ export class ViewPostComponent implements OnInit {
   router = inject(Router);
   isUserAuthenticated: boolean;
   userId: string;
-  post: any;
+  post: Post;
 
   ngOnInit(): void {
     this.authSvc.getAuthStatus().subscribe((status)=>{
@@ -29,8 +29,8 @@ export class ViewPostComponent implements OnInit {
     this.route.paramMap.subscribe((paramMap: ParamMap)=>{
       const postId = paramMap.get('postId');
       this.postSvc.getPost(postId).subscribe((post)=>{
-        this.post = post;
-        console.log(post)
+        const {_id: id, ...rest} = post
+        this.post = {id, ...rest};
       })
     })    
   }
