@@ -5,6 +5,8 @@ import { debounceTime, fromEvent, Subscription, tap } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { AuthService } from "../auth/auth.service";
 import { ToastService } from "../toast.service";
+import { MatDialog } from "@angular/material/dialog";
+import { SemanticSearchDialogComponent } from "../semantic-search/semantic-search-dialog/semantic-search-dialog/semantic-search-dialog.component";
 @Component({
     selector:'app-post-list',
     templateUrl: './post-list.component.html',
@@ -26,6 +28,8 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
     currentPage = 1;
     userId: string;
     searchText: string = "";
+    readonly dialog = inject(MatDialog);
+
     constructor(private postsService: PostsService, private toastSvc: ToastService){}
     
     ngOnInit() {
@@ -73,6 +77,10 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
         this.currentPage = pageData.pageIndex + 1;
         this.postsPerPage = pageData.pageSize;
         this.postsService.getPosts(this.postsPerPage, this.currentPage, this.searchText);
+    }
+
+    openSemanticSearchDialog(){
+        const dialogRef = this.dialog.open(SemanticSearchDialogComponent)
     }
 
 }
