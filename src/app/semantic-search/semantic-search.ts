@@ -1,4 +1,4 @@
-export interface searchResult {
-    title: string,
-    id: string
+export interface SearchResult {
+    postTitle: string,
+    postId: string
 }

@@ -1,31 +1,43 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { searchResult } from '../../semantic-search';
+import { SearchResult } from '../../semantic-search';
+import { SemanticSearchService } from '../../semantic-search.service';
+import { RouterLink } from '@angular/router';
+import { take } from 'rxjs';
+import { MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-semantic-search-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './semantic-search-dialog.component.html',
   styleUrls: ['./semantic-search-dialog.component.scss']
 })
 export class SemanticSearchDialogComponent {
   searchQuery: string = '';
   isSearching: boolean = false;
-  results: searchResult[] = []; // This will be populated api response
+  results: SearchResult[] = []; // This will be populated api response
+  semanticSearchSvc = inject(SemanticSearchService)
+  dialogRef = inject(MatDialogRef)
+  router = inject(Router)
 
   performSearch() {
     this.isSearching = true;
-    
-    // Simulate API Call to your Node.js backend
-    setTimeout(() => {
-      // Dummy data representing vector search results
-      this.results = [
-        { title: 'Finding balance in life is more about mental peace than physical rest.', id:"456" },
-        { title: 'Consistency in coding builds resilience against complex bugs.', id:"123" }
-      ];
+    this.semanticSearchSvc.semanticSearch(this.searchQuery).pipe(take(1)).subscribe((response)=>{
+      this.results = response.result;
       this.isSearching = false;
-    }, 1500);
+    })
   }
+
+  closeDialog(){
+    this.dialogRef.close();
+  }
+
+  openPost(postId: string){
+    this.router.navigate([`/post/${postId}`]);
+    this.dialogRef.close();
+  }
+
 }
