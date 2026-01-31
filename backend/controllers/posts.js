@@ -201,3 +201,27 @@ exports.getPost = (req, res, next) => {
         })
     }
 }
+
+exports.semanticSearch = (req, res, next) => {
+    try{
+        const searchText = req.body.searchText
+    if(!searchText || typeof searchText !== "string" || searchText.trim().length === 0){
+        return res.status(400).json({
+            message:"search text is missing or invalid",
+        })
+    }
+    const payload = {semanticSearchText: searchText};
+
+    aiPostSuggestionApiClient.post('/api/getPosts', payload).then((result)=>{
+        return res.status(200).json({
+            result: result.data.response
+        })
+    })
+}
+catch (error){
+    res.status(500).json({
+        message:`Internal server error: ${error}`,
+    })
+}
+
+}
