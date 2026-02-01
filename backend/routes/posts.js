@@ -20,6 +20,8 @@ router.delete("/:id", checkAuth, postsController.deletePost)
 
 router.get("/:id", canBypassAuth, checkAuth, postsController.getPost);
 
-router.post('/semanticSearch',postsController.semanticSearch)
+router.post('/semanticSearch',postsController.semanticSearch);
+
+router.post('/AiFeatureHealthCheck', postsController.AiFeatureHealthCheck);
 
 module.exports = router;

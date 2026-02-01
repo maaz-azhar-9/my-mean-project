@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
 import { Post } from "../posts/posts.model";
 import { PostsService } from "../posts/posts.service";
-import { debounceTime, fromEvent, Subscription, tap } from "rxjs";
+import { debounceTime, fromEvent, Subscription, take, tap } from "rxjs";
 import { MatPaginator, PageEvent } from "@angular/material/paginator";
 import { AuthService } from "../auth/auth.service";
 import { ToastService } from "../toast.service";
@@ -33,6 +33,7 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
     constructor(private postsService: PostsService, private toastSvc: ToastService){}
     
     ngOnInit() {
+        this.postsService.getAiFeatureHealthStatus().pipe(take(1)).subscribe();
         this.postsService.getPosts(this.postsPerPage, this.currentPage);
         this.isLoading = true;
         this.userId = this.authSvc.getUserId();
