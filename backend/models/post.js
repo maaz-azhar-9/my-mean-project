@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 
 const postSchema = mongoose.Schema({
-    title: { type: String, required: true},
-    content: { type: String, required: true},
-    imagePath: {type: String, required: true},
-    likeCount: {type: Number, default:0, min: [0, 'likeCount cannot be negative']},
-    creator: {type: mongoose.Schema.Types.ObjectId, ref:"User", required: true}
+    title: { type: String, required: true },
+    deleted: { type: Boolean, default: false, index: true },
+    content: { type: String, required: true },
+    imagePath: { type: String, required: true },
+    likeCount: { type: Number, default: 0, min: [0, 'likeCount cannot be negative'] },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
 })
 
-module.exports = mongoose.model('Post',postSchema);
+module.exports = mongoose.model('Post', postSchema);
