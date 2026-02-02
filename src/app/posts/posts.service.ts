@@ -84,8 +84,4 @@ export class PostsService {
       } 
       return this.http.put(`${BACKEND_URL}/${id}`,postData)
      }
-
-     getAiFeatureHealthStatus(){
-       return this.http.post(BACKEND_URL+"/AiFeatureHealthCheck",{});
-     }
 }

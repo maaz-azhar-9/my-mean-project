@@ -33,7 +33,6 @@ export class PostListComponent implements OnInit, OnDestroy, AfterViewInit{
     constructor(private postsService: PostsService, private toastSvc: ToastService){}
     
     ngOnInit() {
-        this.postsService.getAiFeatureHealthStatus().pipe(take(1)).subscribe();
         this.postsService.getPosts(this.postsPerPage, this.currentPage);
         this.isLoading = true;
         this.userId = this.authSvc.getUserId();

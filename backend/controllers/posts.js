@@ -225,21 +225,4 @@ catch (error){
 }
 
 }
-
-exports.AiFeatureHealthCheck = async (req, res) => {
-    try {
-        // Await the health check call
-        const result = await aiPostSuggestionApiClient.get('/api/healthCheck');
-
-        return res.status(200).json({
-            message: 'Health Check Success',
-            serviceStatus: result?.data || 'OK' // optional, for more info
-        });
-    } catch (error) {
-        return res.status(500).json({
-            message: 'Health Check Failed',
-            error: error.message
-        });
-    }
-};
   
