@@ -48,20 +48,20 @@ exports.creatPost = (req, res, next) => {
                 postId: createdPost._id,
                 userId: createdPost.creator
             })
-            .then(() => {
-                res.status(201).json({
-                    message: "Post created successfully",
-                    post: createdPost
-                });
-            })
-            .catch(() => {
-                return Post.findByIdAndDelete(createdPost._id)
-                    .then(() => {
-                        res.status(500).json({
-                            message: "Vector DB failed, MongoDB insert rolled back"
-                        });
+                .then(() => {
+                    res.status(201).json({
+                        message: "Post created successfully",
+                        post: createdPost
                     });
-            });
+                })
+                .catch(() => {
+                    return Post.findByIdAndDelete(createdPost._id)
+                        .then(() => {
+                            res.status(500).json({
+                                message: "Vector DB failed, MongoDB insert rolled back"
+                            });
+                        });
+                });
         })
         .catch(err => {
             res.status(500).json({
@@ -79,33 +79,32 @@ exports.getPosts = (req, res, next) => {
     let postQuery;
     let fetchedPosts;
     let postCount;
-    let query = {
+
+    let query = search.length ? {
+        deleted: { $ne: true },
         $or: [
             { title: { $regex: search, $options: 'i' } },
             { content: { $regex: search, $options: 'i' } }
         ]
-    }
+    } : {
+        deleted: { $ne: true }
+    };
 
-    if (search?.length) {
-        postQuery = Post.find(query);
-    }
-    else {
-        postQuery = Post.find();
-    }
+    postQuery = Post.find(query);
 
     if (pageSize && currentPage) {
         postQuery
-            .sort({_id:-1})
+            .sort({ _id: -1 })
             .skip(pageSize * (currentPage - 1))
             .limit(pageSize)
     }
 
     postQuery.then(documents => {
         fetchedPosts = documents;
-        return search?.length ? Post.countDocuments(query) : Post.countDocuments();
+        return Post.countDocuments(query);
     }).then(count => {
         postCount = count;
-        return req?.query.userId !=="null" ? Promise.all(fetchedPosts.map((post) => {
+        return req?.query.userId !== "null" ? Promise.all(fetchedPosts.map((post) => {
             return Like.find({ postId: post._id, userId: req?.query.userId }).then((response) => {
                 post = { ...post._doc, isLiked: (response.length > 0) ? true : false };
                 return post;
@@ -157,19 +156,32 @@ exports.updatePost = (req, res, next) => {
     })
 }
 
-exports.deletePost = (req, res, next) => {
-    Post.deleteOne({ _id: req.params.id, creator: req.userData.userId }).then((result) => {
-        if (result.deletedCount > 0) {
-            res.status(200).json({
-                message: "Deleted Successfully"
+exports.deletePost = async (req, res, next) => {
+
+    try {
+        const updatedPost = await Post.findByIdAndUpdate(
+            {
+                _id: req.params.id,
+                creator: req.userData.userId
+            },
+            { $set: { deleted: true } },
+            { new: true }
+        );
+        if (!updatedPost) {
+            res.status(404).json({
+                message: "Post you are trying to delete does not exist"
             })
         }
-        else {
-            res.status(401).json({
-                message: "Not Authorized"
-            })
-        }
-    })
+        deleteVectorWithRetries(req.params.id)
+        res.status(200).json({
+            message: "Post deleted successfully"
+        })
+    }
+    catch (error) {
+        res.status(500).json({
+            message: `Error: ${error}`
+        })
+    }
 }
 
 exports.getPost = (req, res, next) => {
@@ -203,26 +215,53 @@ exports.getPost = (req, res, next) => {
 }
 
 exports.semanticSearch = (req, res, next) => {
-    try{
+    try {
         const searchText = req.body.searchText
-    if(!searchText || typeof searchText !== "string" || searchText.trim().length === 0){
-        return res.status(400).json({
-            message:"search text is missing or invalid",
+        if (!searchText || typeof searchText !== "string" || searchText.trim().length === 0) {
+            return res.status(400).json({
+                message: "search text is missing or invalid",
+            })
+        }
+        const payload = { semanticSearchText: searchText };
+
+        aiPostSuggestionApiClient.post('/api/getPosts', payload).then((result) => {
+            return res.status(200).json({
+                result: result.data.response
+            })
         })
     }
-    const payload = {semanticSearchText: searchText};
-
-    aiPostSuggestionApiClient.post('/api/getPosts', payload).then((result)=>{
-        return res.status(200).json({
-            result: result.data.response
+    catch (error) {
+        res.status(500).json({
+            message: `Internal server error: ${error}`,
         })
-    })
-}
-catch (error){
-    res.status(500).json({
-        message:`Internal server error: ${error}`,
-    })
-}
+    }
 
 }
-  
+
+
+/**
+ * Deletes a post vector via the AI microservice with a retry mechanism.
+ * @param {string} postId - The ID of the post to be removed from Qdrant.
+ * @param {number} maxRetries - How many times to try before giving up.
+ */
+const deleteVectorWithRetries = async (postId, maxRetries = 3) => {
+    console.log("I tried")
+    let attempt = 0;
+
+    while (attempt < maxRetries) {
+        try {
+            const response = await aiPostSuggestionApiClient.delete(`/api/deletePost/${postId}`);
+            return response.data;
+
+        } catch (error) {
+            attempt++;
+            if (attempt >= maxRetries) {
+                throw error;
+            }
+
+            // Exponential backoff: Wait 1s, then 2s, then 4s...
+            const delay = Math.pow(2, attempt - 1) * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+};
